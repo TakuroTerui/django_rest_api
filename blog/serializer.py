@@ -4,7 +4,7 @@ from .models import User, Entry
 class UserSerializer(serializers.ModelSerializer):
   class Meta:
     model = User
-    fields = ('name', 'mail')
+    fields = ('username', 'email')
 
 class EntrySerializer(serializers.ModelSerializer):
   # authorのserializerを上書き
