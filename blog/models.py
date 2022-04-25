@@ -1,11 +1,5 @@
 from django.db import models
-
-class User(models.Model):
-  name = models.CharField(max_length = 32)
-  mail = models.EmailField()
-  def __repr__(self):
-    return "{}:{}".format(self.pk, self.name)
-  __str__ = __repr__
+from django.contrib.auth.models import User
 
 class Entry(models.Model):
   STATUS_DRAFT = 'draft'
