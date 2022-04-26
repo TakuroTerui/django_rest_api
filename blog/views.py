@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from rest_framework.permissions import AllowAny
 import django_filters
 from django.db import transaction
@@ -22,11 +22,32 @@ class EntryViewSet(viewsets.ModelViewSet):
   # permission_classes = [AllowAny]
 
 class EntryRegister(viewsets.ModelViewSet):
-  permission_classes = [AllowAny]
+  # permission_classes = [AllowAny]
   queryset = Entry.objects.all()
   serializer_class = EntrySerializer
 
+  def list(self, request):
+    """
+    一覧取得
+    """
+    queryset = Entry.objects.all()
+    print(queryset)
+    serializer = EntrySerializer(queryset, many=True)
+    return Response(serializer.data)
+
+  def retrieve(self, request, pk=None):
+    """
+    詳細
+    """
+    queryset = Entry.objects.all()
+    entry = get_object_or_404(queryset, pk=pk)
+    serializer = EntrySerializer(entry)
+    return Response(serializer.data)
+
   def create(self, request):
+    """
+    新規作成
+    """
     #HTTPリクエストヘッダーのトークン情報からユーザーを特定する
     token = self.request.META['HTTP_AUTHORIZATION'].split(" ")[1]
     #Userオブジェクトの取得
@@ -45,6 +66,37 @@ class EntryRegister(viewsets.ModelViewSet):
     serializer = EntrySerializer(data=regist_data)
     if serializer.is_valid():
       serializer.save()
-      # 登録成功の場合はinsert recordを返す
+      # 登録成功の場合はinsertしたレコードを返す
       return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+  def update(self, request, pk=None):
+    """
+    更新
+    """
+    queryset = Entry.objects.all()
+    entry = get_object_or_404(queryset, pk=pk)
+
+    request_data = request.data.copy()
+    regist_data = {}
+    if ('status' in dict(request_data)):
+      regist_data['status'] = request_data['status']
+    if ('title' in dict(request_data)):
+      regist_data['title'] = request_data['title']
+    if ('body' in dict(request_data)):
+      regist_data['body'] = request_data['body']
+
+    serializer = EntrySerializer(instance=entry, data=regist_data, partial=True)
+    if serializer.is_valid():
+      serializer.save()
+      return Response(serializer.data, status=status.HTTP_204_NO_CONTENT)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+  def destory(self, request, pk=None):
+    """
+    削除
+    """
+    queryset = Entry.objects.all()
+    entry = get_object_or_404(queryset, pk=pk)
+    self.perform_destroy(entry)
+    return Response(status=status.HTTP_204_NO_CONTENT)
