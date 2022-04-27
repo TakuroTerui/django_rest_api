@@ -26,24 +26,6 @@ class EntryRegister(viewsets.ModelViewSet):
   queryset = Entry.objects.all()
   serializer_class = EntrySerializer
 
-  def list(self, request):
-    """
-    一覧取得
-    """
-    queryset = Entry.objects.all()
-    print(queryset)
-    serializer = EntrySerializer(queryset, many=True)
-    return Response(serializer.data)
-
-  def retrieve(self, request, pk=None):
-    """
-    詳細
-    """
-    queryset = Entry.objects.all()
-    entry = get_object_or_404(queryset, pk=pk)
-    serializer = EntrySerializer(entry)
-    return Response(serializer.data)
-
   def create(self, request):
     """
     新規作成
@@ -91,12 +73,3 @@ class EntryRegister(viewsets.ModelViewSet):
       serializer.save()
       return Response(serializer.data, status=status.HTTP_204_NO_CONTENT)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-  def destory(self, request, pk=None):
-    """
-    削除
-    """
-    queryset = Entry.objects.all()
-    entry = get_object_or_404(queryset, pk=pk)
-    self.perform_destroy(entry)
-    return Response(status=status.HTTP_204_NO_CONTENT)
