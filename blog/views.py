@@ -6,7 +6,7 @@ from rest_framework import viewsets, filters, generics, status
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from .models import User, Entry
-from .serializer import UserSerializer, EntrySerializer
+from .serializer import UserSerializer, EntrySerializer, SearchEntrySerializer
 
 class UserViewSet(viewsets.ModelViewSet):
   queryset = User.objects.all()
@@ -25,6 +25,7 @@ class EntryRegister(viewsets.ModelViewSet):
   # permission_classes = [AllowAny]
   queryset = Entry.objects.all()
   serializer_class = EntrySerializer
+  filter_class = SearchEntrySerializer
 
   def create(self, request):
     """
