@@ -10,3 +10,7 @@
 [Django REST Frameworkでユーザ認証周りのAPIを作る](https://qiita.com/xKxAxKx/items/60e8fb93d6bbeebcf065)
 
 [Djangoで独自のトークン認証を実装する](https://qiita.com/t-nezu/items/053cc04dc64dcb5327ab)
+
+### 検索
+
+[【Django】REST frameworkで検索エンジン的なAPIを作った件について【REST framework】](https://qiita.com/chan-p/items/52a69fd32a01eec7ef0c)

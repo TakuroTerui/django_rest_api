@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import User, Entry
 from django.contrib.auth.hashers import make_password
+from django_filters import rest_framework as filters
 
 class UserSerializer(serializers.ModelSerializer):
   class Meta:
@@ -26,3 +27,10 @@ class EntrySerializer(serializers.ModelSerializer):
       entry.status = validated_data['status']
     entry.save()
     return entry
+
+class SearchEntrySerializer(filters.FilterSet):
+  search = filters.CharFilter(lookup_expr='contains')
+
+  class Meta:
+    model = Entry
+    fields = ('title', 'body', 'created_at', 'status', 'author')
