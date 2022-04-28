@@ -26,3 +26,26 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
   """
   if created:
     Token.objects.create(user=instance)
+
+class Pokemon(models.Model):
+  name = models.CharField('名前', max_length=12)
+  hit_points = models.IntegerField('HP')
+  attack = models.IntegerField('攻撃')
+  defense = models.IntegerField('防御')
+  special_attack = models.IntegerField('特攻')
+  special_defense = models.IntegerField('特防')
+  speed = models.IntegerField('素早さ')
+
+  def __str__(self):
+    return self.name
+
+class PokemonType(models.Model):
+  type_name = models.CharField('タイプ', max_length=5)
+  pokemons = models.ManyToManyField(Pokemon, through='PokemonTypeRelation', related_name='pokemons')
+
+  def __str__(self):
+    return self.type_name
+
+class PokemonTypeRelation(models.Model):
+  pokemon_id = models.ForeignKey('Pokemon', on_delete=models.CASCADE)
+  type_id = models.ForeignKey('PokemonType', on_delete=models.CASCADE)
