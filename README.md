@@ -14,3 +14,9 @@
 ### 検索
 
 [【Django】REST frameworkで検索エンジン的なAPIを作った件について【REST framework】](https://qiita.com/chan-p/items/52a69fd32a01eec7ef0c)
+
+### serializer
+
+[DjangoRestFrameworkで中間テーブルをネストした形のJsonで返す](https://qiita.com/Queue0412/items/91b70a13c7be385647b8)
+
+[Pagination](https://www.django-rest-framework.org/api-guide/pagination/#pagination)
