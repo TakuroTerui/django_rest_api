@@ -1,11 +1,13 @@
 from django.shortcuts import render, get_object_or_404
 from rest_framework.permissions import AllowAny
 import django_filters
+import csv
 from django.db import transaction
+from io import TextIOWrapper
 from rest_framework import viewsets, filters, generics, status
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
-from .models import User, Entry
+from .models import User, Entry, Pokemon, PokemonType, PokemonTypeRelation
 from .serializer import UserSerializer, EntrySerializer, SearchEntrySerializer
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -74,3 +76,60 @@ class EntryRegister(viewsets.ModelViewSet):
       serializer.save()
       return Response(serializer.data, status=status.HTTP_204_NO_CONTENT)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+def pokemon(request):
+  """
+  pokemonsテーブルアップロード
+  """
+  if 'csv' in request.FILES:
+    form_data = TextIOWrapper(request.FILES['csv'].file, encoding='utf-8')
+    csv_file = csv.reader(form_data)
+    header = next(csv_file)
+    for line in csv_file:
+      pokemon = Pokemon()
+      pokemon.id = line[0]
+      pokemon.name = line[1]
+      pokemon.hit_points = line[2]
+      pokemon.attack = line[3]
+      pokemon.defense = line[4]
+      pokemon.special_attack = line[5]
+      pokemon.special_defense = line[6]
+      pokemon.speed = line[7]
+      pokemon.save()
+    return render(request, 'upload.html')
+  else:
+    return render(request, 'upload.html')
+
+def type(request):
+  """
+  pokemon_typesテーブルアップロード
+  """
+  if 'csv' in request.FILES:
+    form_data = TextIOWrapper(request.FILES['csv'].file, encoding='utf-8')
+    csv_file = csv.reader(form_data)
+    header = next(csv_file)
+    for line in csv_file:
+      type = PokemonType()
+      type.id = line[0]
+      type.type_name = line[1]
+      type.save()
+    return render(request, 'upload.html')
+  else:
+    return render(request, 'upload.html')
+
+def pokemon_type(request):
+  """
+  pokemon_type_relationsテーブルアップロード
+  """
+  if 'csv' in request.FILES:
+    form_data = TextIOWrapper(request.FILES['csv'].file, encoding='utf-8')
+    csv_file = csv.reader(form_data)
+    header = next(csv_file)
+    for line in csv_file:
+      pokemon_type = PokemonTypeRelation()
+      pokemon_type.pokemon_id = Pokemon.objects.get(id=line[0])
+      pokemon_type.type_id = PokemonType.objects.get(id=line[1])
+      pokemon_type.save()
+    return render(request, 'upload.html')
+  else:
+    return render(request, 'upload.html')
