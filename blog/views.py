@@ -8,7 +8,7 @@ from rest_framework import viewsets, filters, generics, status
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from .models import User, Entry, Pokemon, PokemonType, PokemonTypeRelation
-from .serializer import UserSerializer, EntrySerializer, SearchEntrySerializer
+from .serializer import UserSerializer, EntrySerializer, SearchEntrySerializer, PokemonSerializer, SearchPokemonSerializer, PokemonPagination
 
 class UserViewSet(viewsets.ModelViewSet):
   queryset = User.objects.all()
@@ -76,6 +76,18 @@ class EntryRegister(viewsets.ModelViewSet):
       serializer.save()
       return Response(serializer.data, status=status.HTTP_204_NO_CONTENT)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class PokemonRegister(viewsets.ModelViewSet):
+  queryset = Pokemon.objects.all()
+  serializer_class = PokemonSerializer
+  filter_class = SearchPokemonSerializer
+  pagination_class = PokemonPagination
+
+  def create(self, request):
+    return Response([], status=status.HTTP_400_BAD_REQUEST)
+
+  def update(self, request, pk=None):
+    return Response([], status=status.HTTP_400_BAD_REQUEST)
 
 def pokemon(request):
   """
