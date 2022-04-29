@@ -35,6 +35,7 @@ class Pokemon(models.Model):
   special_attack = models.IntegerField('特攻')
   special_defense = models.IntegerField('特防')
   speed = models.IntegerField('素早さ')
+  parties = models.ManyToManyField(User, through='Party', related_name='parties')
 
   def __str__(self):
     return self.name
@@ -49,3 +50,10 @@ class PokemonType(models.Model):
 class PokemonTypeRelation(models.Model):
   pokemon_id = models.ForeignKey('Pokemon', on_delete=models.CASCADE)
   type_id = models.ForeignKey('PokemonType', on_delete=models.CASCADE)
+
+class Party(models.Model):
+  user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+  pokemon_id = models.ForeignKey(Pokemon, on_delete=models.CASCADE)
+
+  def __str__(self):
+    return self.user_id.username + ':' + self.pokemon_id.name
