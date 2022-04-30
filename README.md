@@ -20,3 +20,8 @@
 [DjangoRestFrameworkで中間テーブルをネストした形のJsonで返す](https://qiita.com/Queue0412/items/91b70a13c7be385647b8)
 
 [Pagination](https://www.django-rest-framework.org/api-guide/pagination/#pagination)
+
+### CORS
+
+[なんとなく CORS がわかる...はもう終わりにする。](https://qiita.com/att55/items/2154a8aad8bf1409db2b)
+[CORSエラーを解決するためにやること(Djangoメイン）](https://crieit.net/posts/CORS-Django)

@@ -14,17 +14,17 @@ class UserViewSet(viewsets.ModelViewSet):
   queryset = User.objects.all()
   serializer_class = UserSerializer
   # 動作確認用
-  # permission_classes = [AllowAny]
+  permission_classes = [AllowAny]
 
 class EntryViewSet(viewsets.ModelViewSet):
   queryset = Entry.objects.all()
   serializer_class = EntrySerializer
   filter_fields = ('author', 'status')
   # 動作確認用
-  # permission_classes = [AllowAny]
+  permission_classes = [AllowAny]
 
 class EntryRegister(viewsets.ModelViewSet):
-  # permission_classes = [AllowAny]
+  permission_classes = [AllowAny]
   queryset = Entry.objects.all()
   serializer_class = EntrySerializer
   filter_class = SearchEntrySerializer
@@ -82,6 +82,7 @@ class PokemonRegister(viewsets.ModelViewSet):
   serializer_class = PokemonSerializer
   filter_class = SearchPokemonSerializer
   pagination_class = PokemonPagination
+  permission_classes = [AllowAny]
 
   def create(self, request):
     return Response([], status=status.HTTP_400_BAD_REQUEST)
