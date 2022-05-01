@@ -15,6 +15,7 @@ class UserSerializer(serializers.ModelSerializer):
     return User.objects.create(**validated_data)
 
 class EntrySerializer(serializers.ModelSerializer):
+  author = UserSerializer()
   class Meta:
     model = Entry
     fields = ('title', 'body', 'created_at', 'status', 'author')
