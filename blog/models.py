@@ -59,8 +59,12 @@ class Party(models.Model):
     return self.user_id.username + ':' + self.pokemon_id.name
 
 class PokemonImage(models.Model):
-  result = models.OneToOneField(Pokemon, on_delete=models.CASCADE)
-  proba = models.FloatField(default=0.0)
+  file = models.FileField(blank=False, null=False)
+
+class PokemonPredict(models.Model):
+  pokemon_name = models.CharField('名前', max_length=12, blank=True, null=True)
+  proba = models.FloatField(default=0.0, blank=True, null=True)
+  image = models.OneToOneField(PokemonImage, on_delete=models.CASCADE)
   created_date = models.DateTimeField(auto_now_add=True)
 
   def __str__(self):
