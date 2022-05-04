@@ -57,3 +57,11 @@ class Party(models.Model):
 
   def __str__(self):
     return self.user_id.username + ':' + self.pokemon_id.name
+
+class PokemonImage(models.Model):
+  result = models.OneToOneField(Pokemon, on_delete=models.CASCADE)
+  proba = models.FloatField(default=0.0)
+  created_date = models.DateTimeField(auto_now_add=True)
+
+  def __str__(self):
+    return '推論:' + self.result.name
