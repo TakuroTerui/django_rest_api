@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, Entry, Pokemon, PokemonType
+from .models import User, Entry, Pokemon, PokemonType, PokemonImage
 from django.contrib.auth.hashers import make_password
 from django_filters import rest_framework as filters
 from rest_framework.pagination import PageNumberPagination
@@ -58,3 +58,8 @@ class SearchPokemonSerializer(filters.FilterSet):
 class PokemonPagination(PageNumberPagination):
   page_size = 30
   page_size_query_param = 'page_size'
+
+class PokemonImageSerializer(serializers.ModelSerializer):
+  class Meta:
+    model = PokemonImage
+    fields = '__all__'
