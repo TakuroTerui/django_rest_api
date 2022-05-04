@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import User, Entry, Pokemon, PokemonType, PokemonTypeRelation, Party
+from .models import User, Entry, Pokemon, PokemonType, PokemonTypeRelation, Party, PokemonImage, PokemonPredict
 
 @admin.register(Entry)
 class Entry(admin.ModelAdmin):
@@ -19,4 +19,12 @@ class PokemonTypeRelation(admin.ModelAdmin):
 
 @admin.register(Party)
 class Party(admin.ModelAdmin):
+  pass
+
+@admin.register(PokemonImage)
+class PokemonImage(admin.ModelAdmin):
+  pass
+
+@admin.register(PokemonPredict)
+class PokemonPredict(admin.ModelAdmin):
   pass
