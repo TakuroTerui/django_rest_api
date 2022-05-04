@@ -68,4 +68,4 @@ class PokemonPredict(models.Model):
   created_date = models.DateTimeField(auto_now_add=True)
 
   def __str__(self):
-    return '推論:' + self.result.name
+    return '推論:' + self.pokemon_name
