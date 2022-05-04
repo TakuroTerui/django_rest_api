@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from rest_framework.permissions import AllowAny
+from django.conf import settings
 import django_filters
 import csv
 from django.db import transaction
@@ -21,6 +22,10 @@ import torch.nn.functional as F
 import torchmetrics
 from torchmetrics.functional import accuracy
 from PIL import Image
+import base64
+from django.core.files.base import ContentFile
+import uuid
+import os
 
 class Net(pl.LightningModule):
   def __init__(self):
@@ -154,51 +159,55 @@ class ImageViewSet(viewsets.ModelViewSet):
   serializer_class = PokemonImageSerializer
 
   def create(self, request):
-    print("リクエスト:{}".format(request.data))
+    ustr = uuid.uuid4()
+    root_ext_pair = os.path.splitext(request.data['name'])
+    file_name = str(ustr) + str(root_ext_pair[1])
     serializer = PokemonImageSerializer(
-      data={'file': request.data.file}
+      data={'file': base64_file(request.data['file'], name=file_name)}
     )
 
     if serializer.is_valid():
       # pokemon_image保存
       serializer.save()
 
-      image_url = '/images/{}'.format(request.data.name)
-      image_id = serializer.id
+      image_url = '/media/{}'.format(file_name)
+      image_id = serializer.data['id']
       image_object = PokemonImage.objects.get(id=image_id)
       predict_data = predict(image_url, image_object)
       return Response(predict_data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 def predict(image_url, image_object):
-  img = Image.open(img_url)
+  image_url = str(settings.BASE_DIR) + image_url
+  img = Image.open(image_url).convert('RGB')
   transform = transforms.Compose([
     transforms.Resize(256),
     transforms.CenterCrop(224),
     transforms.ToTensor(),
     transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
   ])
-  img = transform(file)
+  img = transform(img)
   # 予測値の算出
-  y = loaded_model(img.unsqueeze(0))
+  y = net(img.unsqueeze(0))
   # 確率に変換
   y = F.softmax(y)
   proba = torch.max(y).item() * 100
   # 予測ラベル
   y = torch.argmax(y)
   # 予測ポケモン
-  predict = Pokemon.objects.order_by("name").all()[y:y+1]
+  predict = Pokemon.objects.order_by("name").values_list('pk', flat=True)
+  pokemon = Pokemon.objects.get(pk=predict[y.item()])
   # 推論結果保存
   PokemonPredict.objects.create(
-    pokemon_name=predict.name,
+    pokemon_name=pokemon.name,
     proba=proba,
     image=image_object
   )
   result_list = {
     'proba' : proba,
-    'pokemon_name': predict.name
+    'pokemon_name': pokemon.name,
+    'label': y
   }
-  print('推論結果！！:{}'.formata(result_list))
   return result_list
 
 def pokemon(request):
@@ -257,3 +266,8 @@ def pokemon_type(request):
     return render(request, 'upload.html')
   else:
     return render(request, 'upload.html')
+
+def base64_file(data, name):
+  _format, _img_str = data.split(';base64,')
+  _name, ext = _format.split('/')
+  return ContentFile(base64.b64decode(_img_str), name='{}'.format(name))
