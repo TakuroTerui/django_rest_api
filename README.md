@@ -25,3 +25,8 @@
 
 [なんとなく CORS がわかる...はもう終わりにする。](https://qiita.com/att55/items/2154a8aad8bf1409db2b)
 [CORSエラーを解決するためにやること(Djangoメイン）](https://crieit.net/posts/CORS-Django)
+
+### ファイルアップロード
+
+[DRFを使ったファイルアップロード方法について](https://zenn.dev/miyaji26/articles/9afb2497413bba)
+[画像ファイルアップロードをDjango REST framework+Vue.js+Vuetifyでつくる](https://medium.com/@kaizumaki/django-drf-vue-vuetify-824083717f15)
