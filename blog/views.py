@@ -204,9 +204,9 @@ def predict(image_url, image_object):
     image=image_object
   )
   result_list = {
-    'proba' : proba,
+    'proba' : round(proba),
     'pokemon_name': pokemon.name,
-    'label': y.item()
+    'label': predict[y.item()]
   }
   return result_list
 
