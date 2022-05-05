@@ -206,7 +206,7 @@ def predict(image_url, image_object):
   result_list = {
     'proba' : proba,
     'pokemon_name': pokemon.name,
-    'label': y
+    'label': y.item()
   }
   return result_list
 
