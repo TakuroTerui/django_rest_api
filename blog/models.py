@@ -1,9 +1,11 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
 from rest_framework.authtoken.models import Token
 from django.dispatch import receiver
 from django.db.models.signals import post_save
 from django.conf import settings
+import hashlib
 
 class Entry(models.Model):
   STATUS_DRAFT = 'draft'
@@ -69,3 +71,19 @@ class PokemonPredict(models.Model):
 
   def __str__(self):
     return '推論:' + self.pokemon_name
+
+class RefreshToken(models.Model):
+  @staticmethod
+  def create(user: User):
+    if Token.objects.filter(user=user).exists():
+      Token.objects.get(user=user).delete()
+
+    dt = timezone.now()
+    str = user.email + user.password + dt.strftime('%Y%m%d%H%M%S%f')
+    hash = hashlib.sha1(str.encode('utf-8')).hexdigest()
+
+    token = Token.objects.create(
+      user=user,
+      key=hash,
+    )
+    return token

@@ -22,6 +22,7 @@ from rest_framework.authtoken import views as auth_views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(blog_router.urls)), # 追加
+    path('auth/', include('blog.login_urls')),
     path('upload/', include('blog.upload_urls')),
     path('api-token-auth/', auth_views.obtain_auth_token),
 ]
