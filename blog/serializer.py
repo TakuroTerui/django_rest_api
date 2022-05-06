@@ -12,7 +12,7 @@ class UserSerializer(serializers.ModelSerializer):
   def create(self, validated_data):
     password = validated_data.get('password')
     validated_data['password'] = make_password(password)
-    return User.objects.create(**validated_data)
+    return User.objects.create_user(**validated_data)
 
 class EntrySerializer(serializers.ModelSerializer):
   author = UserSerializer()

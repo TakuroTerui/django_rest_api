@@ -78,6 +78,19 @@ class UserViewSet(viewsets.ModelViewSet):
   # 動作確認用
   permission_classes = [AllowAny]
 
+  def create(self, request):
+    serializer = UserSerializer(data=request.data)
+    if serializer.is_valid():
+      user_obj = serializer.save()
+      token = Token.objects.filter(user=user_obj).first()
+      response = {
+        'username': serializer.data['username'],
+        'email': serializer.data['email'],
+        'token': token.key
+      }
+      return Response(response, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 class EntryViewSet(viewsets.ModelViewSet):
   queryset = Entry.objects.all()
   serializer_class = EntrySerializer
