@@ -1,5 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from rest_framework.permissions import AllowAny
+from rest_framework.views import APIView
+from django.http.response import JsonResponse
 from django.conf import settings
 import django_filters
 import csv
@@ -9,7 +11,7 @@ from rest_framework import viewsets, filters, generics, status
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from rest_framework.parsers import FileUploadParser
-from .models import User, Entry, Pokemon, PokemonType, PokemonTypeRelation, PokemonImage, PokemonPredict
+from .models import User, Entry, Pokemon, PokemonType, PokemonTypeRelation, PokemonImage, PokemonPredict, RefreshToken
 from .serializer import UserSerializer, EntrySerializer, SearchEntrySerializer, PokemonSerializer, SearchPokemonSerializer, PokemonPagination, PokemonImageSerializer
 import pytorch_lightning as pl
 import torchvision
@@ -222,6 +224,35 @@ def predict(image_url, image_object):
     'label': predict[y.item()]
   }
   return result_list
+
+class Login(APIView):
+  permission_classes = [AllowAny]
+  def post(self, request, format=None):
+    # リクエストボディのJSONを読み込み、メールアドレス、パスワードを取得
+    try:
+      data = request.data
+      username = data['username']
+      password = data['password']
+    except:
+      # JSONの読み込みに失敗
+      return JsonResponse({'message': 'Post data injustice'}, status=400)
+
+    # メールアドレスからユーザを取得
+    if not User.objects.filter(username=username).exists():
+      # 存在しない場合は403を返却
+      return JsonResponse({'message': 'Login failure.'}, status=403)
+
+    user = User.objects.get(username=username)
+    # パスワードチェック
+    if not user.check_password(password):
+      # チェックエラー
+      return JsonResponse({'message': 'Login failure.'}, status=403)
+
+    # ログインOKの場合は、トークンを生成
+    token = RefreshToken.create(user)
+
+    # トークンを返却
+    return JsonResponse({'token': token.key})
 
 def pokemon(request):
   """
