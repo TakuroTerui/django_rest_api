@@ -58,7 +58,7 @@ class Party(models.Model):
   pokemon_id = models.ForeignKey(Pokemon, on_delete=models.CASCADE)
 
   def __str__(self):
-    return self.user_id.username + ':' + self.pokemon_id.name
+    return self.pokemon_id.name
 
 class PokemonImage(models.Model):
   file = models.FileField(blank=False, null=False)
