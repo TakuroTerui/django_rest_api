@@ -11,8 +11,8 @@ from rest_framework import viewsets, filters, generics, status
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from rest_framework.parsers import FileUploadParser
-from .models import User, Entry, Pokemon, PokemonType, PokemonTypeRelation, PokemonImage, PokemonPredict, RefreshToken
-from .serializer import UserSerializer, EntrySerializer, SearchEntrySerializer, PokemonSerializer, SearchPokemonSerializer, PokemonPagination, PokemonImageSerializer
+from .models import User, Entry, Pokemon, PokemonType, PokemonTypeRelation, PokemonImage, PokemonPredict, RefreshToken, Party
+from .serializer import UserSerializer, EntrySerializer, SearchEntrySerializer, PokemonSerializer, SearchPokemonSerializer, PokemonPagination, PokemonImageSerializer, PartySerializer
 import pytorch_lightning as pl
 import torchvision
 from torchvision import transforms
@@ -92,6 +92,20 @@ class UserViewSet(viewsets.ModelViewSet):
       }
       return Response(response, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class PartyViewSet(viewsets.ModelViewSet):
+  queryset = Party.objects.all()
+  serializer_class = PartySerializer
+
+  def list(self, request):
+    token = self.request.META['HTTP_AUTHORIZATION'].split(" ")[1]
+    user_obj = Token.objects.get(key=token).user
+
+    party = Party.objects.filter(user_id=user_obj)
+    response = []
+    for i, _ in enumerate(party):
+      response.append(str(party[i]))
+    return Response(response, status=status.HTTP_200_OK)
 
 class EntryViewSet(viewsets.ModelViewSet):
   queryset = Entry.objects.all()
