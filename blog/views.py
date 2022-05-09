@@ -104,7 +104,16 @@ class PartyViewSet(viewsets.ModelViewSet):
     party = Party.objects.filter(user_id=user_obj)
     response = []
     for i, _ in enumerate(party):
-      response.append(str(party[i]))
+      response.extend([{
+        'id': party[i].pokemon_id.id,
+        'name': party[i].pokemon_id.name,
+        'hit_points': party[i].pokemon_id.hit_points,
+        'attack': party[i].pokemon_id.attack,
+        'defense': party[i].pokemon_id.defense,
+        'special_attack': party[i].pokemon_id.special_attack,
+        'special_defense': party[i].pokemon_id.special_defense,
+        'speed': party[i].pokemon_id.speed,
+      }])
     return Response(response, status=status.HTTP_200_OK)
 
 class EntryViewSet(viewsets.ModelViewSet):
