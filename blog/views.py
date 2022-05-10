@@ -119,6 +119,21 @@ class PartyViewSet(viewsets.ModelViewSet):
     response['party'] = party_list
     return Response(response, status=status.HTTP_200_OK)
 
+  def create(self, request):
+    token = self.request.META['HTTP_AUTHORIZATION'].split(" ")[1]
+    user_obj = Token.objects.get(key=token).user
+
+    party_count = Party.objects.filter(user_id=user_obj).count()
+    if party_count > 6:
+      return Response([], status=status.HTTP_400_BAD_REQUEST)
+
+    pokemon_obj = Pokemon.objects.get(id=request.data['id'])
+    try:
+      Party.objects.create(user_id=user_obj, pokemon_id=pokemon_obj)
+    except:
+      return Response([], status=status.HTTP_400_BAD_REQUEST)
+    return Response([], status=status.HTTP_201_CREATED)
+
 class EntryViewSet(viewsets.ModelViewSet):
   queryset = Entry.objects.all()
   serializer_class = EntrySerializer
