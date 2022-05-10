@@ -102,9 +102,11 @@ class PartyViewSet(viewsets.ModelViewSet):
     user_obj = Token.objects.get(key=token).user
 
     party = Party.objects.filter(user_id=user_obj)
-    response = []
+    pokemon = Pokemon.objects.values()
+    response = {'pokemon': pokemon}
+    party_list = []
     for i, _ in enumerate(party):
-      response.extend([{
+      party_list.extend([{
         'id': party[i].pokemon_id.id,
         'name': party[i].pokemon_id.name,
         'hit_points': party[i].pokemon_id.hit_points,
@@ -114,6 +116,7 @@ class PartyViewSet(viewsets.ModelViewSet):
         'special_defense': party[i].pokemon_id.special_defense,
         'speed': party[i].pokemon_id.speed,
       }])
+    response['party'] = party_list
     return Response(response, status=status.HTTP_200_OK)
 
 class EntryViewSet(viewsets.ModelViewSet):
