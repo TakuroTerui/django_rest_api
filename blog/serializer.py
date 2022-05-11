@@ -59,6 +59,10 @@ class PokemonPagination(PageNumberPagination):
   page_size = 30
   page_size_query_param = 'page_size'
 
+class EntryPagination(PageNumberPagination):
+  page_size = 30
+  page_size_query_param = 'page_size'
+
 class PokemonImageSerializer(serializers.ModelSerializer):
   class Meta:
     model = PokemonImage
