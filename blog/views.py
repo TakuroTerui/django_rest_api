@@ -115,7 +115,8 @@ class PartyViewSet(viewsets.ModelViewSet):
         'special_attack': party[i].pokemon_id.special_attack,
         'special_defense': party[i].pokemon_id.special_defense,
         'speed': party[i].pokemon_id.speed,
-        'party_id': party[i].id
+        'party_id': party[i].id,
+        'type': list(party[i].pokemon_id.pokemons.values_list('type_name', flat=True)),
       }])
     response['party'] = party_list
     return Response(response, status=status.HTTP_200_OK)
