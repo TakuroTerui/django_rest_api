@@ -12,7 +12,7 @@ from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from rest_framework.parsers import FileUploadParser
 from .models import User, Entry, Pokemon, PokemonType, PokemonTypeRelation, PokemonImage, PokemonPredict, RefreshToken, Party
-from .serializer import UserSerializer, EntrySerializer, SearchEntrySerializer, PokemonSerializer, SearchPokemonSerializer, PokemonPagination, PokemonImageSerializer, PartySerializer
+from .serializer import UserSerializer, EntrySerializer, SearchEntrySerializer, PokemonSerializer, SearchPokemonSerializer, PokemonPagination, PokemonImageSerializer, PartySerializer, EntryPagination
 import pytorch_lightning as pl
 import torchvision
 from torchvision import transforms
@@ -148,6 +148,7 @@ class EntryRegister(viewsets.ModelViewSet):
   queryset = Entry.objects.all()
   serializer_class = EntrySerializer
   filter_class = SearchEntrySerializer
+  pagination_class = EntryPagination
 
   def create(self, request):
     """
@@ -168,12 +169,11 @@ class EntryRegister(viewsets.ModelViewSet):
       # ステータスの初期値はdraft(=下書き)
       regist_data['status'] = request_data['status']
 
-    serializer = EntrySerializer(data=regist_data)
-    if serializer.is_valid():
-      serializer.save()
-      # 登録成功の場合はinsertしたレコードを返す
-      return Response(serializer.data, status=status.HTTP_201_CREATED)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    try:
+      Entry.objects.create(title=regist_data['title'], body=regist_data['body'], author=user_obj, status=regist_data['status'])
+    except:
+      return Response([], status=status.HTTP_400_BAD_REQUEST)
+    return Response(regist_data, status=status.HTTP_201_CREATED)
 
   def update(self, request, pk=None):
     """
