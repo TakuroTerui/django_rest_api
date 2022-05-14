@@ -18,7 +18,7 @@ class EntrySerializer(serializers.ModelSerializer):
   author = UserSerializer()
   class Meta:
     model = Entry
-    fields = ('title', 'body', 'created_at', 'status', 'author')
+    fields = ('id', 'title', 'body', 'created_at', 'status', 'author')
 
   def create(self, validated_data):
     entry = Entry()
