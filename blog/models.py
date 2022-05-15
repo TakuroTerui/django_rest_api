@@ -20,6 +20,7 @@ class Entry(models.Model):
   updated_at = models.DateField(auto_now = True)
   status = models.CharField(choices = STATUS_SET, default = STATUS_DRAFT, max_length = 8)
   author = models.ForeignKey(User, related_name = 'entries', on_delete=models.CASCADE)
+  favorites = models.ManyToManyField(User, through='Favorite', related_name='favorites')
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def create_auth_token(sender, instance=None, created=False, **kwargs):
@@ -87,3 +88,7 @@ class RefreshToken(models.Model):
       key=hash,
     )
     return token
+
+class Favorite(models.Model):
+  user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+  entry_id = models.ForeignKey(Entry, on_delete=models.CASCADE)
