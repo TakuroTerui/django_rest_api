@@ -11,8 +11,8 @@ from rest_framework import viewsets, filters, generics, status
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from rest_framework.parsers import FileUploadParser
-from .models import User, Entry, Pokemon, PokemonType, PokemonTypeRelation, PokemonImage, PokemonPredict, RefreshToken, Party
-from .serializer import UserSerializer, EntrySerializer, SearchEntrySerializer, PokemonSerializer, SearchPokemonSerializer, PokemonPagination, PokemonImageSerializer, PartySerializer, EntryPagination
+from .models import User, Entry, Pokemon, PokemonType, PokemonTypeRelation, PokemonImage, PokemonPredict, RefreshToken, Party, Favorite
+from .serializer import UserSerializer, EntrySerializer, SearchEntrySerializer, PokemonSerializer, SearchPokemonSerializer, PokemonPagination, PokemonImageSerializer, PartySerializer, EntryPagination, FavoriteSerializer
 import pytorch_lightning as pl
 import torchvision
 from torchvision import transforms
@@ -209,6 +209,21 @@ class PokemonRegister(viewsets.ModelViewSet):
 
   def update(self, request, pk=None):
     return Response([], status=status.HTTP_400_BAD_REQUEST)
+
+class Favorite(viewsets.ModelViewSet):
+  queryset = Favorite.objects.all()
+  serializer_class = FavoriteSerializer
+
+  def create(self, request):
+    token = self.request.META['HTTP_AUTHORIZATION'].split(" ")[1]
+    user_obj = Token.objects.get(key=token).user
+    entry_obj = Entry.objects.get(key=request.data.id)
+
+    try:
+      Favorite.objects.create(user_id=user_obj, entry_id=entry_obj)
+    except:
+      return Response([], status=status.HTTP_400_BAD_REQUEST)
+    return Response([], status=status.HTTP_201_CREATED)
 
 class ImageViewSet(viewsets.ModelViewSet):
   queryset = PokemonImage.objects.all()
