@@ -144,7 +144,6 @@ class EntryViewSet(viewsets.ModelViewSet):
   permission_classes = [AllowAny]
 
 class EntryRegister(viewsets.ModelViewSet):
-  permission_classes = [AllowAny]
   queryset = Entry.objects.all()
   serializer_class = EntrySerializer
   filter_class = SearchEntrySerializer
