@@ -209,9 +209,15 @@ class PokemonRegister(viewsets.ModelViewSet):
   def update(self, request, pk=None):
     return Response([], status=status.HTTP_400_BAD_REQUEST)
 
-class Favorite(viewsets.ModelViewSet):
+class FavoriteViewSet(viewsets.ModelViewSet):
   queryset = Favorite.objects.all()
   serializer_class = FavoriteSerializer
+
+  def list(self, request):
+    token = self.request.META['HTTP_AUTHORIZATION'].split(" ")[1]
+    user_obj = Token.objects.get(key=token).user
+    favorites = Favorite.objects.filter(user_id=user_obj).values()
+    return Response(favorites, status=status.HTTP_200_OK)
 
   def create(self, request):
     token = self.request.META['HTTP_AUTHORIZATION'].split(" ")[1]
