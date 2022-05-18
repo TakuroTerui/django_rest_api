@@ -1,5 +1,5 @@
 from rest_framework import routers
-from .views import UserViewSet, EntryViewSet, EntryRegister, PokemonRegister, ImageViewSet, PartyViewSet
+from .views import UserViewSet, EntryViewSet, EntryRegister, PokemonRegister, ImageViewSet, PartyViewSet, FavoriteViewSet
 from django.conf.urls import include, url
 from django.urls import path
 
@@ -10,3 +10,4 @@ router.register('register', EntryRegister)
 router.register('pokemon', PokemonRegister)
 router.register('predict', ImageViewSet)
 router.register('party', PartyViewSet)
+router.register('favorite', FavoriteViewSet)
